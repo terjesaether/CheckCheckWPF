@@ -49,6 +49,10 @@ namespace CheckCheckWPF
                 }
             }
 
+
+            SplashScreen splash = new SplashScreen("NDIcon.ico");
+            splash.Show(true);
+
             allProductions = ExcelScanning.scanDubtoolFolder(lboxShowFiles, Excel03ConString, txtActorName.Text.ToString(), allProductions);
         }
 
@@ -112,7 +116,7 @@ namespace CheckCheckWPF
             {
                 if (selectedFile.Contains(episode.trimFilename(episode.excelFileName, Utils.dubToolDir)))
                 {
-                    dataGridView1.DataContext = episode.frontPageDataTable;
+                    dataGridView1.DataContext = episode.frontPageDataTable.DefaultView;
                     chosenExcelFileDataTable = episode.frontPageDataTable;
                     Calculations.calculateByOneEpisode(chosenExcelFileDataTable, txtActorName.Text.ToString(), spShowResult, chckIntro, lblTotalNumLines);
 

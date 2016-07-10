@@ -35,7 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>CheckIcon.ico</ApplicationIcon>
+    <ApplicationIcon>NDIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>CheckCheckWPF.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -62,6 +65,9 @@
     <Compile Include="ExcelScanning.cs" />
     <Compile Include="PrintResults.cs" />
     <Compile Include="ScanFolder.cs" />
+    <Compile Include="splashWindow.xaml.cs">
+      <DependentUpon>splashWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -77,6 +83,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="splashWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Productions.cs" />
@@ -111,6 +121,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="CheckIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="NDIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

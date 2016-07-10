@@ -32,12 +32,12 @@
                     <Grid Height="50" VerticalAlignment="Top" Margin="10, 50, 10, 0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="270"></ColumnDefinition>
-                            <ColumnDefinition Width="200"></ColumnDefinition>
+                            <ColumnDefinition Width="600"></ColumnDefinition>
                             <ColumnDefinition Width="*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Content="Valgt dubber:" />
                         <TextBlock Name="lblChosenDubber" Grid.Column="0" Foreground="Red" Margin="100, 5, 0, 0" Text="{Binding Text, ElementName=txtActorName}" FontSize="18" FontWeight="Bold" />
-                        <TextBlock Name="lblTotalNumLines" Grid.Column="1" Margin="0,5,478,0" Text="Utregning" Grid.ColumnSpan="2" FontSize="14" />
+                        <TextBlock Name="lblTotalNumLines" Grid.Column="1" Margin="0,5,27,0" Text="Utregning" FontSize="14" />
                     </Grid>
 
                     <Grid Margin="0, 80, 0, 0" Height="600" VerticalAlignment="Top" Name="gridBig">
@@ -45,18 +45,19 @@
                             <ColumnDefinition Width="260"></ColumnDefinition>
                             <ColumnDefinition Width="*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <ListBox x:Name="lboxShowFiles" Grid.Column="0" HorizontalAlignment="Left" Height="517" Margin="10,
+
+                        <ListBox x:Name="lboxShowFiles" Grid.Column="0" HorizontalAlignment="Left" Height="600" Margin="10,
                                  0,0,0" VerticalAlignment="Top" Width="241" SelectionChanged="lboxShowFiles_SelectionChanged"/>
 
-                        <ListBox x:Name="spShowResult" HorizontalContentAlignment="Stretch" Background="Aqua" Grid.Column="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"></ListBox>
-                       
+                        <ListBox x:Name="spShowResult" Height="600" HorizontalContentAlignment="Stretch" Background="Aqua" Grid.Column="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"></ListBox>
+
                     </Grid>
 
                 </Grid>
             </TabItem>
             <TabItem Header="Forside">
 
-                <DataGrid x:Name="dataGridView1" Width="1150" Margin="10,10,10,10"/>
+                <DataGrid x:Name="dataGridView1" ItemsSource="{Binding}" Width="1150" Height="800" Background="Aquamarine" Margin="10,10,10,10"/>
             </TabItem>
 
         </TabControl>
@@ -67,3 +68,5 @@
     </Grid>
 
 </Window>
+
+    

@@ -25,7 +25,8 @@ namespace CheckCheckWPF
                     int totNumLinesPrEpisode = 0;
 
                     var container = new StackPanel { Margin = new Thickness(5, 5, 0, 5) };
-                    var mainText = new TextBlock { FontSize = 15 };
+
+                    var mainText = new TextBlock { FontSize = 15, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, -30) };
 
                     var textBlockHeading = new TextBlock { FontSize = 18, FontWeight = FontWeights.Bold, Foreground = Brushes.WhiteSmoke, Background = Brushes.DarkBlue, Height = 24 };
 
@@ -92,7 +93,7 @@ namespace CheckCheckWPF
                     }
                     // Tar bort komma:
                     string result = resultTemp.Substring(0, resultTemp.Length - 2);
-                    result += " || Totalt " + totNumLinesPrEpisode.ToString() + " rep.";
+                    result += " == Totalt " + totNumLinesPrEpisode.ToString() + " rep.";
 
                     if (totNumLinesPrEpisode > 0)
                     {

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace CheckCheckWPF
 {
@@ -82,6 +83,29 @@ namespace CheckCheckWPF
 
                 return textBox.Text;
             }
+        }
+
+        public static void ShowSplashScreen(bool show)
+        {
+            var window = new Window { Width = 500, Height = 400, Background = Brushes.Blue, WindowStartupLocation =  WindowStartupLocation.CenterScreen };
+
+            var grid = new Grid();
+            var textBlock = new TextBlock { Text = "Vent litt..", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Foreground = Brushes.Wheat, FontSize = 20 };
+
+            window.Content = grid;
+            grid.Children.Add(textBlock);
+
+            if (show)
+            {
+                window.Show();
+            }
+            else
+            {
+                window.Hide();
+            }
+            
+
+
         }
 
 
