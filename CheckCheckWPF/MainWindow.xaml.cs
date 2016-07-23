@@ -27,19 +27,21 @@ namespace CheckCheckWPF
             InitializeComponent();
         }
 
-        private string Excel03ConString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};Extended Properties='Excel 8.0;IMEX=1;HDR=NO'";
+        //private string Excel03ConString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};Extended Properties='Excel 8.0;IMEX=1;HDR=NO'";
         //private string Excel07ConString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 8.0;IMEX=1;HDR=NO'";
 
         NordubbProductions allProductions = new NordubbProductions();
         DataTable chosenExcelFileDataTable = new DataTable();
 
         // Dato for å lage en uløpsdato. Finner dagens dato fra nettet
-        DateTime expDate = new DateTime(2016, 8, 15);
+        DateTime expDate = new DateTime(2016, 9, 1);
         //DateTime systemTime = DateTime.Now;
         DateTime systemTime = GetSystemTime.GetNetworkTime();
 
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+
+
             if (DateTime.Compare(systemTime, expDate) > 0)
             {
                 string svar = Utils.Prompt.ShowDialog("Enter password");
@@ -49,18 +51,25 @@ namespace CheckCheckWPF
                 }
             }
 
+            txtActorName.Focus();
 
-            SplashScreen splash = new SplashScreen("NDIcon.ico");
-            splash.Show(true);
+            //string userDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString();
 
-            allProductions = ExcelScanning.scanDubtoolFolder(lboxShowFiles, Excel03ConString, txtActorName.Text.ToString(), allProductions);
+            //GlobalVariables.dubToolDir = "";
+
+            //GlobalVariables.dubToolDir = userDocumentsPath + @"\dubtool\";
+
+            allProductions = ExcelScanning.scanDubtoolFolder(lboxShowFiles, txtActorName.Text.ToString());
+
+
         }
 
         private void btnRescanFolder_Click(object sender, RoutedEventArgs e)
         {
-
-            WrapPanel newWrapPanel = CreatePanel.CreateNewWrapPanel();
-            spShowResult.Items.Add(newWrapPanel);
+            //NordubbProductions allProductions = new NordubbProductions();
+            lboxShowFiles.Items.Clear();
+            spShowResult.Items.Clear();
+            allProductions = ExcelScanning.scanDubtoolFolder(lboxShowFiles, txtActorName.Text.ToString());
 
         }
 
@@ -73,9 +82,14 @@ namespace CheckCheckWPF
         }
 
         // Globale variabler
-        public class Variables
+        public class GlobalVariables
         {
             public static DataTable theTable { get; set; }
+            public static string searchType { get; set; }
+            public static string Excel03ConString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};Extended Properties='Excel 8.0;IMEX=1;HDR=NO'";
+            //public static string Excel07ConString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 8.0;IMEX=1;HDR=NO'";
+            public static string dubToolDir { get; set; }
+
         }
 
         private void btnCheckActor_Click(object sender, RoutedEventArgs e)
@@ -87,7 +101,7 @@ namespace CheckCheckWPF
             else
             {
                 string searchString = afterSearchButtonPressed();
-                Calculations.calculateByOneEpisode(chosenExcelFileDataTable, searchString, spShowResult, chckIntro, lblTotalNumLines);
+                Calculations.calculateByOneEpisode(chosenExcelFileDataTable, searchString, spShowResult, chckIntro, comboLinesPrHour.SelectedValue.ToString(), lblTotalNumLines);
 
             }
         }
@@ -105,7 +119,7 @@ namespace CheckCheckWPF
 
         private void btnListFolder_Click(object sender, EventArgs e)
         {
-            ExcelScanning.scanDubtoolFolder(lboxShowFiles, Excel03ConString, txtActorName.Text.ToString(), allProductions);
+            ExcelScanning.scanDubtoolFolder(lboxShowFiles, txtActorName.Text.ToString());
         }
 
 
@@ -114,11 +128,11 @@ namespace CheckCheckWPF
         {
             foreach (var episode in allProductions.productions)
             {
-                if (selectedFile.Contains(episode.trimFilename(episode.excelFileName, Utils.dubToolDir)))
+                if (selectedFile.Contains(episode.trimFilename(episode.excelFileName, GlobalVariables.dubToolDir)))
                 {
                     dataGridView1.DataContext = episode.frontPageDataTable.DefaultView;
                     chosenExcelFileDataTable = episode.frontPageDataTable;
-                    Calculations.calculateByOneEpisode(chosenExcelFileDataTable, txtActorName.Text.ToString(), spShowResult, chckIntro, lblTotalNumLines);
+                    Calculations.calculateByOneEpisode(chosenExcelFileDataTable, txtActorName.Text.ToString(), spShowResult, chckIntro, comboLinesPrHour.SelectedValue.ToString(), lblTotalNumLines);
 
                 }
             }
@@ -135,17 +149,96 @@ namespace CheckCheckWPF
         }
 
 
-
-        private void btnRescanFolder_Click(object sender, EventArgs e)
-        {
-            allProductions = ExcelScanning.scanDubtoolFolder(lboxShowFiles, Excel03ConString, txtActorName.Text.ToString(), allProductions);
-        }
-
         // Listbox changes
         private void lboxShowFiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string selectedFile = lboxShowFiles.SelectedItem.ToString();
-            chooseEpisode(selectedFile);
+            if (lboxShowFiles.Items.Count > 0)
+            {
+                string selectedFile = lboxShowFiles.SelectedItem.ToString();
+                chooseEpisode(selectedFile);
+            }
+
+        }
+
+        private void comboLinesPrHour_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (mainWindow.IsLoaded)
+            {
+                if (lboxShowFiles.Items.Count > 0)
+                {
+                    string selectedFile = lboxShowFiles.SelectedItem.ToString();
+                    chooseEpisode(selectedFile);
+                    spShowResult.Items.Clear();
+                    Calculations.calculateByOneEpisode(chosenExcelFileDataTable, txtActorName.Text.ToString(), spShowResult, chckIntro, comboLinesPrHour.SelectedValue.ToString(), lblTotalNumLines);
+                }
+            }
+
+
+        }
+
+        private void radioSearchActor_Checked(object sender, RoutedEventArgs e)
+        {
+
+            checkSearchType();
+        }
+
+        private void radioSearchRole_Checked(object sender, RoutedEventArgs e)
+        {
+            checkSearchType();
+        }
+
+        private void checkSearchType()
+        {
+
+
+            if (radioSearchActor.IsChecked.Value)
+            {
+                GlobalVariables.searchType = "actor";
+            }
+            else
+            {
+                GlobalVariables.searchType = "role";
+            }
+
+
+
+        }
+
+        private void SetFocusToSearchBox(object sender, KeyEventArgs e)
+        {
+            //if (e.Key == Key.S && !txtActorName.IsFocused)
+            //{
+
+
+            //}
+
+            //if (e.Key == Key.P && Keyboard.Modifiers == ModifierKeys.Control)
+            //{
+
+            //    MessageBox.Show("trykket");
+            //}
+
+            if (e.Key == Key.F4)
+            {
+
+                txtActorName.Focus();
+                txtActorName.Clear();
+            }
+        }
+
+
+        private void dubtoolFolder_Checked(object sender, RoutedEventArgs e)
+        {
+            if (radioLocalFolder.IsChecked.Value)
+            {
+                GlobalVariables.dubToolDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() + @"\dubtool\";
+                //MessageBox.Show(GlobalVariables.dubToolDir);
+            }
+            else if (serverFolder.IsChecked.Value)
+            {
+                GlobalVariables.dubToolDir = @"N:\MANUS\ -Dubtool- \";
+                //MessageBox.Show(GlobalVariables.dubToolDir);
+            }
         }
     }
 }

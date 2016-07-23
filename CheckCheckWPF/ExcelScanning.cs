@@ -8,18 +8,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static CheckCheckWPF.MainWindow;
 
 namespace CheckCheckWPF
 {
     public class ExcelScanning
     {
         // Scanner folder og henter inn alle manusene i minnet og fyller opp listboks og comboboks
-        public static NordubbProductions scanDubtoolFolder(ListBox lboxShowFiles, string Excel03ConString, string searchString, NordubbProductions allProductions)
+        public static NordubbProductions scanDubtoolFolder(ListBox lboxShowFiles, string searchString)
         {
             string conStr;
             conStr = string.Empty;
             string sheetName = "";
-            
+            NordubbProductions allProductions = new NordubbProductions();
 
             List<string> dtc = new List<string>();
             dtc = getDubtoolFolderContent();
@@ -30,7 +31,16 @@ namespace CheckCheckWPF
             int counter = 0;
             foreach (var excelFile in dtc) // Fylle opp en liste med DataTables
             {
-                conStr = string.Format(Excel03ConString, excelFile);
+                if (excelFile.EndsWith(".xls"))
+                {
+                    conStr = string.Format(GlobalVariables.Excel03ConString, excelFile);
+                }
+                else
+                {
+                    MessageBox.Show("Excel-format-problem!");
+                    //conStr = string.Format(MyVariables.Excel07ConString, excelFile);
+                }
+
 
                 //Get the name of the First Sheet.
                 using (OleDbConnection con = new OleDbConnection(conStr))
@@ -47,7 +57,7 @@ namespace CheckCheckWPF
                             for (var sheets = 0; sheets < dtExcelSchema.Rows.Count; sheets++)
                             {
                                 //sheetName = dtExcelSchema.Rows[sheets]["TABLE_NAME"].ToString();
-                                if (dtExcelSchema.Rows[sheets]["TABLE_NAME"].ToString().Contains("Forside") || dtExcelSchema.Rows[sheets]["TABLE_NAME"].ToString().Contains("#00"))
+                                if (dtExcelSchema.Rows[sheets]["TABLE_NAME"].ToString().Contains("Forside") || dtExcelSchema.Rows[sheets]["TABLE_NAME"].ToString().Contains("#00") || dtExcelSchema.Rows[sheets]["TABLE_NAME"].ToString().Contains("Oversikt"))
                                 {
                                     sheetName = dtExcelSchema.Rows[sheets]["TABLE_NAME"].ToString();
                                     break;
@@ -104,11 +114,12 @@ namespace CheckCheckWPF
         public static List<string> getDubtoolFolderContent()
         {
             List<string> dtc = new List<string>();
-            DirectoryInfo dinfo = new DirectoryInfo(Utils.dubToolDir);
+            DirectoryInfo dinfo = new DirectoryInfo(GlobalVariables.dubToolDir);
 
             if (dinfo.Exists)
             {
                 FileInfo[] Files = dinfo.GetFiles("*.xls");
+                //FileInfo[] Files = dinfo.GetFiles();
 
                 foreach (FileInfo file in Files)
                 {
@@ -116,11 +127,16 @@ namespace CheckCheckWPF
                     {
                         dtc.Add(dinfo.ToString() + file.Name.ToString());
                     }
+                    else if (file.Extension == ".xlsx")
+                    {
+                        //dtc.Add(dinfo.ToString() + file.Name.ToString());
+                        MessageBox.Show("Det er .xlsx-fil(er) i dubtool-mappa. Den vil ikke bli lastet inn i oversikten. Sjekk det og lagre filene som .xls.", "Fare!");
+
+                    }
                     else
                     {
                         MessageBox.Show("Ser ut som det er noen uvedkommende filer i mappa...", "Fare!");
                     }
-
                 }
             }
             else

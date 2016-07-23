@@ -51,20 +51,30 @@ namespace CheckCheckWPF
     {
         public string episodeNumber { get; set; }
         public string seriesName { get; set; }
-        public List<RoleNameAndNumOfLines> roleNames { get; set; }
+        public List<SearchNameAndNumOfLines> roleNames { get; set; }
+        public List<Mengder> Mengder { get; set; }
         public string deliveryDate { get; set; }
 
+        // Constructor
         public Episode()
         {
-            roleNames = new List<RoleNameAndNumOfLines>();
+            roleNames = new List<SearchNameAndNumOfLines>();
+            Mengder = new List<Mengder>();
         }
     }
 
-    public class RoleNameAndNumOfLines
+    public class SearchNameAndNumOfLines
     {
-        public string roleName { get; set; }
+        public string searchName { get; set; }
         public string numOfLines { get; set; }
         public string totalNumOfLines { get; set; }
-
     }
+
+    public class Mengder
+    {
+        public string MengdeRoleNames { get; set; }
+        public string MengdeNumOfLines { get; set; }
+    }
+
+
 }

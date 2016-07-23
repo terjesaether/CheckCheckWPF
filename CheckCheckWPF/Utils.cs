@@ -7,20 +7,24 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using static CheckCheckWPF.MainWindow;
 
 namespace CheckCheckWPF
 {
     public class Utils
     {
 
-        public const string dubToolDir = @"C:\dubtool\";
+        //public static string userDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString();
+
+        //public static string dubToolDir = userDocumentsPath + @"\dubtool\";
+
 
         public static void listFiles(ListBox listbox, ComboBox combobox)
         {
             listbox.Items.Clear();
             combobox.Items.Clear();
 
-            DirectoryInfo dinfo = new DirectoryInfo(dubToolDir);
+            DirectoryInfo dinfo = new DirectoryInfo(GlobalVariables.dubToolDir);
             if (dinfo.Exists)
             {
                 FileInfo[] Files = dinfo.GetFiles("*.xls");
@@ -42,7 +46,7 @@ namespace CheckCheckWPF
             foreach (var file in folderContent)
             {
 
-                onlyFileName = file.Substring(dubToolDir.Length, file.Length - dubToolDir.Length - 4);
+                onlyFileName = file.Substring(GlobalVariables.dubToolDir.Length, file.Length - GlobalVariables.dubToolDir.Length - 4);
                 listbox.Items.Add(onlyFileName);
                 //combobox.Items.Add(onlyFileName);
             }
@@ -70,9 +74,9 @@ namespace CheckCheckWPF
 
                 TextBlock header = new TextBlock { Width = 100, Height = 50 }; ;
                 header.Text = headerText;
-                TextBox textBox = new TextBox() { Width = 200, Height = 50 };
+                TextBox textBox = new TextBox() { Width = 200, Height = 50, FontSize = 30 };
 
-                Button confirmation = new Button() { Content = "Ok", Height = 50, Width = 80 };
+                Button confirmation = new Button() { Content = "Ok", Height = 50, Width = 100 };
                 confirmation.Click += (sender, e) => { window.Close(); };
                 grid.Children.Add(textBox);
                 grid.Children.Add(confirmation);
@@ -87,7 +91,7 @@ namespace CheckCheckWPF
 
         public static void ShowSplashScreen(bool show)
         {
-            var window = new Window { Width = 500, Height = 400, Background = Brushes.Blue, WindowStartupLocation =  WindowStartupLocation.CenterScreen };
+            var window = new Window { Width = 500, Height = 400, Background = Brushes.Blue, WindowStartupLocation = WindowStartupLocation.CenterScreen };
 
             var grid = new Grid();
             var textBlock = new TextBlock { Text = "Vent litt..", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Foreground = Brushes.Wheat, FontSize = 20 };
@@ -103,12 +107,15 @@ namespace CheckCheckWPF
             {
                 window.Hide();
             }
-            
+
 
 
         }
 
-
+        public static string ToStringAndLower(string s)
+        {
+            return s.ToString().ToLower();
+        }
 
 
     }

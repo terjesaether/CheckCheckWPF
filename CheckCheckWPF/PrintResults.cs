@@ -20,26 +20,33 @@ namespace CheckCheckWPF
 
             foreach (var item in episodeList)
             {
-                if (item.roleNames.Count > 0)
+                if (item.roleNames.Count > 0 || item.Mengder.Count > 0)
                 {
-                    int totNumLinesPrEpisode = 0;
 
                     var container = new StackPanel { Margin = new Thickness(5, 5, 0, 5) };
 
-                    var mainText = new TextBlock { FontSize = 15, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, -30) };
+                    var mainText = new TextBox { FontSize = 15, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, -30), BorderThickness = new Thickness(0), Padding = new Thickness(4, 4, 4, 4) };
 
-                    var textBlockHeading = new TextBlock { FontSize = 18, FontWeight = FontWeights.Bold, Foreground = Brushes.WhiteSmoke, Background = Brushes.DarkBlue, Height = 24 };
+                    var textBlockHeading = new TextBlock { FontSize = 18, FontWeight = FontWeights.Bold, Foreground = Brushes.WhiteSmoke, Background = Brushes.DarkBlue, Height = 24, Padding = new Thickness(4, 0, 4, 4) };
 
-                    var textBlockEpNumber = new TextBlock { FontSize = 16, FontWeight = FontWeights.Normal, Foreground = Brushes.WhiteSmoke, Background = Brushes.Green, Height = 22 };
+                    var textBlockMengde = new TextBlock { FontSize = 16, Text = "Mengder: ", Foreground = Brushes.Red, Margin = new Thickness(0, 0, 0, 10) };
 
-                    var removeButton = new Button { Content = "Ferdig", Width = 80, Height = 20, HorizontalAlignment = HorizontalAlignment.Left };
+                    var removeButton = new Button { Content = "Fjern", Width = 80, Height = 24, HorizontalAlignment = HorizontalAlignment.Left };
 
                     removeButton.Click += btn_Click;
 
                     TimeSpan span = new TimeSpan();
+
+                    int totNumLinesPrEpisode = 0;
+
                     string warningText = "";
                     string daysText = " dager.";
                     string deliveryText = "";
+                    //string resultTemp = "";
+                    string mengdeTemp = "";
+                    string mengdeText = "";
+                    string resultText = "";
+
 
                     if (item.deliveryDate.ToString() != "")
                     {
@@ -62,18 +69,13 @@ namespace CheckCheckWPF
                     }
 
 
-
-
                     if (span.Days == 1)
                     {
                         daysText = " dag.";
                     }
 
                     // TextBlockHeading
-                    textBlockHeading.Text = string.Format("{0} - Episode{1} {2}", item.seriesName.ToUpper(), item.episodeNumber, deliveryText);
-
-                    // TextBlockEpNumber
-                    textBlockEpNumber.Text = "Ep: " + item.episodeNumber.ToString() + "\n";
+                    textBlockHeading.Text = string.Format("{0} - Episode {1} {2}", item.seriesName.ToUpper(), item.episodeNumber, deliveryText);
 
 
                     string resultTemp = "";
@@ -82,44 +84,73 @@ namespace CheckCheckWPF
 
                     for (int role = 0; role < item.roleNames.Count; role += 1)
                     {
-                        if (!(checkBoxNoIntro.IsChecked.Value && (item.roleNames[role].roleName.ToString().ToLower() == "intro" || item.roleNames[role].roleName.ToString().ToLower() == "outro" || item.roleNames[role].roleName.ToString().ToLower() == "plakat")))
+
+
+                        if (!(checkBoxNoIntro.IsChecked.Value && (item.roleNames[role].searchName.ToString().ToLower() == "intro" || item.roleNames[role].searchName.ToString().ToLower() == "outro" || item.roleNames[role].searchName.ToString().ToLower() == "plakat")))
                         {
-                            resultTemp += item.roleNames[role].roleName.ToString() + ": " + item.roleNames[role].numOfLines.ToString() + ", ";
+                            resultTemp += item.roleNames[role].searchName.ToString() + ": " + item.roleNames[role].numOfLines.ToString() + ", ";
 
                             // Regner ut antall replikker
                             totNumLinesPrEpisode += Convert.ToInt32(item.roleNames[role].numOfLines);
-                            totNumLines += totNumLinesPrEpisode;
+                            
                         }
                     }
-                    // Tar bort komma:
-                    string result = resultTemp.Substring(0, resultTemp.Length - 2);
-                    result += " == Totalt " + totNumLinesPrEpisode.ToString() + " rep.";
+
+                    
+
+                    // Fyller opp mengde-info:
+                    for (int m = 0; m < item.Mengder.Count; m++)
+                    {
+                        mengdeTemp += item.Mengder[m].MengdeRoleNames.ToString() + " (" + item.Mengder[m].MengdeNumOfLines.ToString() + "), ";
+
+                    }
+                    // Tar bort komma på slutten:
+                    if (resultTemp.Length > 2)
+                    {
+                        resultText = resultTemp.Substring(0, resultTemp.Length - 2);
+                    }
+                    if (mengdeTemp.Length > 2)
+                    {
+                        mengdeText = mengdeTemp.Substring(0, mengdeTemp.Length - 2);
+                    }
+
+
+                    resultText += " == Totalt " + totNumLinesPrEpisode.ToString() + " rep.";
+
+                    
 
                     if (totNumLinesPrEpisode > 0)
                     {
                         // Sjekker om få replikker
                         if (totNumLinesPrEpisode < 3)
                         {
-                            result += " ..kanskje vi har en pickup her?";
+                            resultText += " ..kanskje vi har en pickup her?";
                         }
 
-                        //result += Environment.NewLine;
-                        result += "\r\n\r\n";
+                        resultText += "\r\n\r\n";
 
 
                         // Slår sammen hele WrapPanelet med TextBlock'ene:
-                        mainText.Text = result;
+                        //mainText.Text = resultText;
+                        mainText.Text = resultText;
+                        textBlockMengde.Text += mengdeText;
                         container.Children.Add(textBlockHeading);
-                        container.Children.Add(textBlockEpNumber);
                         container.Children.Add(mainText);
+
+                        if (mengdeTemp.Length > 0)
+                        {
+                            container.Children.Add(textBlockMengde);
+                        }
+
                         container.Children.Add(removeButton);
 
                         resultPanel.Items.Add(container);
 
                     }
-
+                    totNumLines += totNumLinesPrEpisode;
                 }
                 counter++;
+
             }
             return totNumLines;
         }
@@ -140,14 +171,6 @@ namespace CheckCheckWPF
         }
 
 
-
-        //public static void CalculateAllEpisodes(NordubbProductions productions, FlowLayoutPanel resultPanel)
-        //{
-        //    foreach (var item in productions.productions)
-        //    {
-        //        //printResultByEpisode(item.frontPageDataTable, panel);
-        //    }
-        //}
 
     }
 }
